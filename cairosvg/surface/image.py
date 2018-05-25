@@ -81,16 +81,8 @@ def image(surface, node):
     if url.startswith("data:"):
         image_bytes = open_data_url(url)
     else:
-        base_url = node.get("{http://www.w3.org/XML/1998/namespace}base")
-        if base_url:
-            url = urlparse.urljoin(base_url, url)
-        if node.url:
-            url = urlparse.urljoin(node.url, url)
-        if urlparse.urlparse(url).scheme:
-            input_ = urlopen(url)
-        else:
-            input_ = open(url, 'rb')  # filename
-        image_bytes = input_.read()
+        # SSRF mitigation: don't try to open any files/URLs
+        return
 
     if len(image_bytes) < 5:
         return
